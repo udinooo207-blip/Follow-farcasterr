@@ -44,7 +44,7 @@
           status.innerText = "🔍 Mencari user...";
           const userRes = await fetch(
             `https://api.neynar.com/v2/farcaster/user-by-username?username=${username}`,
-            { headers: { api_key: "MASUKKAN_API_KEY_NEYNAR_KAMU" } }
+            { headers: { api_key: "C84CFA1C-7A3D-4ACC-8438-E78846E02DD2" } }
           );
           const userData = await userRes.json();
           if (!userData.user) return (status.innerText = "❌ User tidak ditemukan!");
