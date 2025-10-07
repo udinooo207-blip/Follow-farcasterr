@@ -1,16 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <title>Follow Mini App</title>
 
-    <!-- 🟣 Tambahkan Meta Tag untuk Farcaster Mini App -->
+    <!-- 🟣 Farcaster Frame Metadata -->
     <meta name="fc:frame" content="vNext" />
     <meta name="fc:frame:post_url" content="https://follow-farcasterr.vercel.app/" />
+    <meta name="fc:frame:image" content="https://upload.wikimedia.org/wikipedia/commons/9/9a/Farcaster_logo.png" />
     <meta name="fc:frame:button:1" content="Open App" />
-    <meta name="og:title" content="Follow Farcaster Mini App" />
-    <meta name="og:description" content="Login dan follow user Farcaster dengan mudah" />
-    <meta name="og:image" content="https://upload.wikimedia.org/wikipedia/commons/9/9a/Farcaster_logo.png" />
+
+    <!-- 🖼️ OG Metadata -->
+    <meta property="og:title" content="Follow Farcaster Mini App" />
+    <meta property="og:description" content="Login dan follow user Farcaster dengan mudah" />
+    <meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/9/9a/Farcaster_logo.png" />
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/9/9a/Farcaster_logo.png" />
   </head>
 
   <body style="font-family:sans-serif;text-align:center;margin-top:80px;">
@@ -23,8 +27,8 @@
     <p id="status"></p>
 
     <script>
-      const CLIENT_ID = "468536e4-a0e8-4673-969d-cfe28cebb84b"; // Ganti ini
-      const API_KEY = "C84CFA1C-7A3D-4ACC-8438-E78846E02DD2"; // Ganti ini
+      const CLIENT_ID = "468536e4-a0e8-4673-969d-cfe28cebb84b"; // Ganti dengan Client ID kamu
+      const API_KEY = "C84CFA1C-7A3D-4ACC-8438-E78846E02DD2"; // Ganti dengan API Key kamu
       const REDIRECT_URI = window.location.origin + "/";
 
       // ===== LOGIN BUTTON =====
@@ -65,7 +69,6 @@
 
           status.innerText = `📡 Mengirim permintaan follow ke ${username}...`;
 
-          // Kirim permintaan follow
           const res = await fetch("https://api.neynar.com/v2/farcaster/user/follow", {
             method: "POST",
             headers: {
