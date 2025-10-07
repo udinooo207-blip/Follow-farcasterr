@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Follow on Farcaster</title>
+  </head>
+  <body style="font-family: sans-serif; text-align: center; margin-top: 100px;">
+    <h2>Follow User di Farcaster</h2>
+    <input id="username" placeholder="Masukkan username Farcaster" />
+    <button onclick="follow()">Follow</button>
+    <p id="status"></p>
+
+    <script>
+      async function follow() {
+        const username = document.getElementById("username").value.trim();
+        if (!username) {
+          document.getElementById("status").innerText = "Isi username dulu";
+          return;
+        }
+
+        const r = await fetch("https://api.neynar.com/v2/farcaster/user-by-username?username=" + username, {
+          headers: { "api_key": "MASUKKAN_API_KEY_NEYNAR_KAMU" }
+        });
+        const data = await r.json();
+        if (!data.user) {
+          document.getElementById("status").innerText = "User tidak ditemukan";
+          return;
+        }
+
+        document.getElementById("status").innerText =
+          "Berhasil ambil user: " + data.user.username + " (fid: " + data.user.fid + ")";
+      }
+    </script>
+  </body>
+</html>
