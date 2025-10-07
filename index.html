@@ -2,67 +2,62 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Follow on Farcaster</title>
+    <title>Follow Mini App</title>
   </head>
-  <body style="font-family: sans-serif; text-align: center; margin-top: 80px;">
+  <body style="font-family:sans-serif;text-align:center;margin-top:80px;">
     <h2>Login ke Farcaster</h2>
     <button id="loginBtn">Sign in with Farcaster</button>
     <div id="userInfo"></div>
-    <br />
-    <input id="username" placeholder="Masukkan username untuk di-follow" />
+    <br/>
+    <input id="username" placeholder="Masukkan username untuk di-follow"/>
     <button id="followBtn" style="display:none;">Follow</button>
     <p id="status"></p>
 
     <script>
-      const CLIENT_ID = "468536e4-a0e8-4673-969d-cfe28cebb84b"; // dari Warpcast Developer
+      const CLIENT_ID = "468536e4-a0e8-4673-969d-cfe28cebb84b"; // Ganti ini
       const REDIRECT_URI = window.location.origin + "/";
-      const FARCASTER_AUTH_URL = `https://api.warpcast.com/v2/oauth?response_type=token&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
-        REDIRECT_URI
-      )}&scope=write`;
 
       document.getElementById("loginBtn").onclick = () => {
-        window.location.href = FARCASTER_AUTH_URL;
+        const url = `https://app.neynar.com/login?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(
+          REDIRECT_URI
+        )}&scope=openid%20farcaster%20user`;
+        window.location.href = url;
       };
 
-      // Jika sudah login
-      const hash = window.location.hash;
-      if (hash.includes("access_token")) {
-        const params = new URLSearchParams(hash.replace("#", ""));
-        const token = params.get("access_token");
-        localStorage.setItem("farcaster_token", token);
+      // Setelah login
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("code");
+      if (token) {
+        localStorage.setItem("farcaster_code", token);
         document.getElementById("loginBtn").style.display = "none";
         document.getElementById("followBtn").style.display = "inline";
-        document.getElementById("userInfo").innerText = "✅ Sudah login ke Farcaster!";
+        document.getElementById("userInfo").innerText = "✅ Sudah login dengan Farcaster!";
       }
 
       document.getElementById("followBtn").onclick = async () => {
-        const token = localStorage.getItem("farcaster_token");
+        const code = localStorage.getItem("farcaster_code");
         const username = document.getElementById("username").value.trim();
         const status = document.getElementById("status");
         if (!username) return (status.innerText = "Isi username dulu");
 
-        status.innerText = "🔍 Mencari user...";
-        const userRes = await fetch(
-          `https://client.farcaster.xyz/v2/user-by-username?username=${username}`
-        );
-        const userData = await userRes.json();
-        if (!userData.result?.user?.fid)
-          return (status.innerText = "❌ User tidak ditemukan!");
+        try {
+          status.innerText = "🔍 Mencari user...";
+          const userRes = await fetch(
+            `https://api.neynar.com/v2/farcaster/user-by-username?username=${username}`,
+            { headers: { api_key: "MASUKKAN_API_KEY_NEYNAR_KAMU" } }
+          );
+          const userData = await userRes.json();
+          if (!userData.user) return (status.innerText = "❌ User tidak ditemukan!");
 
-        const fid = userData.result.user.fid;
-        status.innerText = `➡️ Mengirim follow untuk ${username}...`;
+          const fid = userData.user.fid;
+          status.innerText = `➡️ Siap follow ${username} (fid: ${fid})`;
 
-        const resFollow = await fetch("https://client.farcaster.xyz/v2/follow-user", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ targetFid: fid }),
-        });
-
-        if (resFollow.ok) status.innerText = `🎉 Berhasil follow ${username}!`;
-        else status.innerText = `⚠️ Gagal follow user.`;
+          // Catatan: Untuk follow sungguhan, nanti harus kirim request pakai signer user (farcaster actions)
+          status.innerText += "\n🧠 Step berikutnya: integrasi dengan Neynar Action API untuk follow otomatis.";
+        } catch (err) {
+          console.error(err);
+          status.innerText = "🚫 Terjadi error koneksi.";
+        }
       };
     </script>
   </body>
